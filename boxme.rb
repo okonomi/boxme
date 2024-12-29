@@ -7,6 +7,10 @@ require "uri"
 
 module Boxme
   class Server
+    def initialize(state)
+      @state = state
+    end
+
     def start
       server = TCPServer.new 3000
       while session = server.accept
@@ -40,7 +44,9 @@ module Boxme
         uri = URI.parse(path)
         if uri.path == "/callback"
           query = Hash[URI.decode_www_form(uri.query)]
-          return query
+          if query["state"] == @state
+            return query
+          end
         end
       end
     end
@@ -57,14 +63,15 @@ when "login"
   print "Enter your client secret: "
   client_secret = STDIN.gets.chomp
 
-  server = Thread.new do
-    Boxme::Server.new.start
-  end
-
   base_url = "https://account.box.com/api/oauth2/authorize"
   redirect_uri = "http://localhost:3000/callback"
   response_type = "code"
   state = SecureRandom.hex(32)
+
+  server = Thread.new do
+    Boxme::Server.new(state).start
+  end
+
   authorization_url = "#{base_url}?client_id=#{client_id}&response_type=#{response_type}&state=#{state}&redirect_uri=#{redirect_uri}"
 
   Launchy.open(authorization_url)
