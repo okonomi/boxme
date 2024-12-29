@@ -3,6 +3,7 @@ Bundler.require(:default)
 
 require "securerandom"
 require "socket"
+require "uri"
 
 module Boxme
   class Server
@@ -11,6 +12,7 @@ module Boxme
       while session = server.accept
         request = session.gets
         puts request
+        data = handle(request)
 
         response = <<~RESPONSE
           HTTP/1.1 200 OK
@@ -26,7 +28,20 @@ module Boxme
 
         session.puts response
         session.close
-        return
+        return data["code"]
+      end
+    end
+
+    private
+
+    def handle(request)
+      method, path, version = request.split(" ")
+      if method == "GET"
+        uri = URI.parse(path)
+        if uri.path == "/callback"
+          query = Hash[URI.decode_www_form(uri.query)]
+          return query
+        end
       end
     end
   end
@@ -55,6 +70,9 @@ when "login"
   Launchy.open(authorization_url)
 
   server.join
+
+  code = server.value
+  puts "Authorization code: #{code}"
 when "user"
   puts "Show user information"
 else
