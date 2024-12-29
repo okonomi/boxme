@@ -61,7 +61,7 @@ when "login"
     Boxme::Server.new.start
   end
 
-  base_url = "https://app.box.com/api/oauth2/authorize"
+  base_url = "https://account.box.com/api/oauth2/authorize"
   redirect_uri = "http://localhost:3000/callback"
   response_type = "code"
   state = SecureRandom.hex(32)
