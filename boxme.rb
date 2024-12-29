@@ -1,4 +1,5 @@
 require "bundler/setup"
+Bundler.require(:default)
 
 case ARGV[0]
 when "login"
@@ -9,6 +10,8 @@ when "login"
 
   print "Enter your client secret: "
   client_secret = STDIN.gets.chomp
+
+  Launchy.open("https://box.com")
 when "user"
   puts "Show user information"
 else
