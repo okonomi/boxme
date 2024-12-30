@@ -3,6 +3,7 @@ Bundler.require(:default)
 
 require "securerandom"
 require "socket"
+require "net/http"
 require "uri"
 
 module Boxme
@@ -119,6 +120,16 @@ when "login"
 
   code = server.value
   puts "Authorization code: #{code}"
+
+  puts "Exchange authorization code for access token"
+  token_url = URI("https://api.box.com/oauth2/token")
+  response = Net::HTTP.post_form(token_url, {
+    grant_type: "authorization_code",
+    code: code,
+    client_id: client_id,
+    client_secret: client_secret,
+  })
+  puts response.body
 when "user"
   puts "Show user information"
 else
