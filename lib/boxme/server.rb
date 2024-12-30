@@ -32,6 +32,17 @@ module Boxme
 
     private
 
+    def parse_request(input)
+      method, path, version = input.split(" ")
+      uri = URI.parse(path)
+      {
+        version: version,
+        method: method,
+        path: uri.path,
+        query: Hash[URI.decode_www_form(uri.query || "")],
+      }
+    end
+
     def handle(request)
       case request.values_at(:method, :path)
       in ["GET", "/callback"]
@@ -75,17 +86,6 @@ module Boxme
           </html>
         RESPONSE
       end
-    end
-
-    def parse_request(input)
-      method, path, version = input.split(" ")
-      uri = URI.parse(path)
-      {
-        version: version,
-        method: method,
-        path: uri.path,
-        query: Hash[URI.decode_www_form(uri.query || "")],
-      }
     end
   end
 end
