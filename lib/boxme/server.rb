@@ -33,13 +33,13 @@ module Boxme
     private
 
     def parse_request(input)
-      method, path, version = input.split(" ")
+      method, path, version = input.split
       uri = URI.parse(path)
       {
         version: version,
         method: method,
         path: uri.path,
-        query: Hash[URI.decode_www_form(uri.query || "")]
+        query: URI.decode_www_form(uri.query || "").to_h
       }
     end
 

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "./server"
-require_relative "./commands/login"
-require_relative "./commands/user"
+require_relative "server"
+require_relative "commands/login"
+require_relative "commands/user"
 
 module Boxme
   class CLI
