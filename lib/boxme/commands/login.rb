@@ -1,7 +1,9 @@
+require "json"
 require "launchy"
 require "net/http"
 require "securerandom"
 require "uri"
+require "xdg"
 
 require_relative "../server"
 
@@ -36,6 +38,8 @@ module Boxme
         puts "Exchange authorization code for access token"
         token_info = exchange_code_for_access_token(code, client_id, client_secret)
         puts token_info
+
+        save_token_info(token_info)
       end
 
       private
@@ -74,7 +78,14 @@ module Boxme
           client_id: client_id,
           client_secret: client_secret,
         })
-        puts response.body
+        JSON.parse(response.body)
+      end
+
+      def save_token_info(token_info)
+        xdg_config = XDG::Config.new
+        config_dir = xdg_config.home.join("boxme")
+        config_dir.mkpath
+        File.write(config_dir.join("token.json"), JSON.pretty_generate(token_info))
       end
     end
   end
