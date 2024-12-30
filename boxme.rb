@@ -7,7 +7,7 @@ require_relative "lib/boxme/commands/user"
 
 case ARGV[0]
 when "login"
-  Boxme::Commands::Login.new("http://localhost:3000/callback").call
+  Boxme::Commands::Login.new.call
 when "user"
   Boxme::Commands::User.new.call
 else

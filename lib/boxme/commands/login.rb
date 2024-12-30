@@ -13,21 +13,19 @@ module Boxme
       AUTHORIZE_URL = URI("https://account.box.com/api/oauth2/authorize").freeze
       TOKEN_URL = URI("https://api.box.com/oauth2/token").freeze
 
-      def initialize(callback_url)
-        @callback_url = callback_url
-      end
-
       def call
         puts "Login to Box"
 
+        callback_url = "http://localhost:3000/callback"
         state = SecureRandom.hex(32)
 
         client_id, client_secret = gets_oauth2_credentials
 
         server_thread = start_server(state)
 
-        authorization_url = build_authorization_url(client_id: client_id, state: state, redirect_uri: @callback_url)
+        authorization_url = build_authorization_url(client_id: client_id, state: state, redirect_uri: callback_url)
 
+        puts "Open the following URL in your browser: #{authorization_url}"
         Launchy.open(authorization_url.to_s)
 
         server_thread.join
