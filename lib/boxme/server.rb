@@ -18,15 +18,15 @@ module Boxme
         client = server.accept
         input = client.gets
         puts input
-        if input
-          request = parse_request(input)
-          response = handle(request)
+        next unless input
 
-          client.puts response
-          client.close
+        request = parse_request(input)
+        response = handle(request)
 
-          return @code if @code
-        end
+        client.puts response
+        client.close
+
+        return @code if @code
       end
     end
 
@@ -39,7 +39,7 @@ module Boxme
         version: version,
         method: method,
         path: uri.path,
-        query: Hash[URI.decode_www_form(uri.query || "")],
+        query: Hash[URI.decode_www_form(uri.query || "")]
       }
     end
 
@@ -49,7 +49,7 @@ module Boxme
         if request[:query]["state"] == @state
           @code = request[:query]["code"]
 
-          return <<~RESPONSE
+          <<~RESPONSE
             HTTP/1.1 200 OK
             Content-Type: text/html
 
@@ -61,7 +61,7 @@ module Boxme
             </html>
           RESPONSE
         else
-          return <<~RESPONSE
+          <<~RESPONSE
             HTTP/1.1 400 OK
             Content-Type: text/html
 
@@ -74,7 +74,7 @@ module Boxme
           RESPONSE
         end
       else
-        return <<~RESPONSE
+        <<~RESPONSE
           HTTP/1.1 404 Not Found
           Content-Type: text/html
 

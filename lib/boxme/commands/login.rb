@@ -46,10 +46,10 @@ module Boxme
 
       def gets_oauth2_credentials
         print "Enter your client ID: "
-        client_id = STDIN.gets.chomp
+        client_id = $stdin.gets.chomp
 
         print "Enter your client secret: "
-        client_secret = STDIN.gets.chomp
+        client_secret = $stdin.gets.chomp
 
         [client_id, client_secret]
       end
@@ -63,21 +63,21 @@ module Boxme
       def build_authorization_url(client_id:, state:, redirect_uri:)
         AUTHORIZE_URL.dup.tap do |url|
           url.query = URI.encode_www_form({
-            client_id: client_id,
-            response_type: "code",
-            state: state,
-            redirect_uri: redirect_uri,
-          })
+                                            client_id: client_id,
+                                            response_type: "code",
+                                            state: state,
+                                            redirect_uri: redirect_uri
+                                          })
         end
       end
 
       def exchange_code_for_access_token(code, client_id, client_secret)
         response = Net::HTTP.post_form(TOKEN_URL, {
-          grant_type: "authorization_code",
-          code: code,
-          client_id: client_id,
-          client_secret: client_secret,
-        })
+                                         grant_type: "authorization_code",
+                                         code: code,
+                                         client_id: client_id,
+                                         client_secret: client_secret
+                                       })
         JSON.parse(response.body)
       end
 

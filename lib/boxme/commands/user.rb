@@ -23,7 +23,7 @@ module Boxme
 
       def load_token_info
         path = XDG::Config.new.home.join("boxme", "token.json")
-        token_info = JSON.load(path.read) if path.file?
+        token_info = JSON.parse(path.read) if path.file?
 
         raise "No token found. Please login first" unless token_info
 
@@ -32,7 +32,7 @@ module Boxme
 
       def get_current_user(token_info)
         http = Net::HTTP.new(USER_URL.host, USER_URL.port)
-        http.use_ssl = USER_URL.scheme === "https"
+        http.use_ssl = USER_URL.scheme == "https"
 
         headers = { authorization: "Bearer #{token_info["access_token"]}" }
         response = http.get(USER_URL.path, headers)
