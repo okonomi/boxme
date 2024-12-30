@@ -6,3 +6,7 @@ source "https://rubygems.org"
 
 gem "launchy"
 gem "xdg"
+
+group :development do
+  gem "rubocop"
+end
